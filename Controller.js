@@ -28,7 +28,7 @@ app.get('/', function(req, res){
 });
 
 
-//Inserindo novos registros
+//Inserindo novos registros de clientes
 app.post('/clientes', async(req, res) => {
     await cliente.create(
         req.body
@@ -45,6 +45,8 @@ app.post('/clientes', async(req, res) => {
     });
 });
 
+
+//Inserindo novos registros de cartões
 app.post('/cartoes', async(req, res) => {
     await cartao.create(
         req.body  
@@ -62,51 +64,75 @@ app.post('/cartoes', async(req, res) => {
 });
 
 
-// app.post('/compras', async(req, res) => {
-//     await compra.create(
-//         req.body
-//     ).then(function(){     
-//         return res.json({
-//             error: false,
-//             message: 'Compra realizada com sucesso.'
-//         })
-//     }).catch(function(erro){
-//         return res.status(400).json({
-//             error: true,
-//             message: 'Não foi possível se conectar.'
-//         })
-//     });
-// });
+//Inserindo novos registros de empresas
+app.post('/empresas', async(req, res) => {
+    await empresa.create(
+            req.body
+    ).then(function(){     
+        return res.json({
+            error: false,
+            message: 'Empresa criada com sucesso.'
+        })
+    }).catch(function(erro){
+        return res.status(400).json({
+            error: true,
+            message: 'Não foi possível se conectar.'
+        })
+    });
+});
 
-// app.post('/promocoes', async(req, res) => {
-//     await promocao.create(
-//             req.body
-//     ).then(function(){     
-//         return res.json({
-//             error: false,
-//             message: 'Promoção criada com sucesso.'
-//         })
-//     }).catch(function(erro){
-//         return res.status(400).json({
-//             error: true,
-//             message: 'Não foi possível se conectar.'
-//         })
-//     });
-// });
 
-// app.post('/empresas', async(req, res) => {
-//     await empresa.create(
-//             req.body
-//     ).then(function(){     
-//         return res.json({
-//             error: false,
-//             message: 'Empresa criada com sucesso.'
-//         })
-//     }).catch(function(erro){
+//Inserindo novos registros de promoções
+app.post('/promocoes', async(req, res) => {
+    await promocao.create(
+            req.body
+    ).then(function(){     
+        return res.json({
+            error: false,
+            message: 'Promoção criada com sucesso.'
+        })
+    }).catch(function(erro){
+        return res.status(400).json({
+            error: true,
+            message: 'Não foi possível se conectar.'
+        })
+    });
+});
+
+
+//Inserindo novos registros de compras
+// app.post('/cartoes/:idcartao/promocoes/:idpromocao/compras', async(req, res) => {
+//     const comp = {
+//         date: req.body.date,
+//         quantidade: req.body.quantidade,
+//         valor: req.body.valor,
+//         CartaoId: req.params.idcartao,
+//         PromocaoId: req.params.idpromocao,
+//     };
+//     if (! await cartao.findbyPk(rep.params.id)){
 //         return res.status(400).json({
 //             error: true,
-//             message: 'Não foi possível se conectar.'
+//             message: "Cliente não existe."
+//         });
+//     };
+//     if (! await promocao.findbyPk(rep.params.id)){
+//         return res.status(400).json({
+//             error: true,
+//             message: "Promoção não existe."
 //         })
+//     };
+//     await compra.create(comp)
+//     .then (compcli=>{
+//         return res.json({
+//             error: false,
+//             message: "Compra foi inserida com sucesso!",
+//             compcli
+//         });
+//     }).catch ( erro =>{
+//         return res.status(400).json({
+//             error: true,
+//             message: "Não foi possível se conectar."
+//         });
 //     });
 // });
 
@@ -123,12 +149,32 @@ app.get('/listaclientes', async(req, res) => {
 });
 
 
-//Retornando todos os cartões criados
+//Retornando todos os cartões cadastrados
 app.get('/listacartoes', async(req, res) => {
     await cartao.findAll({
         order: [['id', 'ASC']]   
     }).then(function(cartoes){
         res.json({cartoes})
+    });
+});
+
+
+//Retornando todas as empresas cadastradas
+app.get('/listaempresas', async(req, res) => {
+    await empresa.findAll({
+        order: [['nome', 'ASC']]   
+    }).then(function(empresas){
+        res.json({empresas})
+    });
+});
+
+
+//Retornando todas as promoções cadastradas
+app.get('/listapromocoes', async(req, res) => {
+    await promocao.findAll({
+        order: [['id', 'ASC']]   
+    }).then(function(promocoes){
+        res.json({promocoes})
     });
 });
 
@@ -143,28 +189,9 @@ app.get('/listacartoes', async(req, res) => {
 // });
 
 
-// //Retornando todas as promoções
-// app.get('/listapromocoes', async(req, res) => {
-//     await promocao.findAll({
-//         order: [['id', 'DESC']]   
-//     }).then(function(promocoes){
-//         res.json({promocoes})
-//     });
-// });
-
-// //Retornando todas as empresas cadastradas
-// app.get('/listaempresas', async(req, res) => {
-//     await empresa.findAll({
-//         order: [['nome', 'DESC']]   
-//     }).then(function(empresas){
-//         res.json({empresas})
-//     });
-// });
-
-
 /*--------------Criando Updates--------------*/
 
-//Realizando e retornando as alterações feitas
+//Realizando e retornando as alterações feitas em clientes
 app.put('/editacliente', async(req, res) => {
     await cliente.update(req.body, {
         where: {id: req.body.id}
@@ -181,6 +208,8 @@ app.put('/editacliente', async(req, res) => {
     });
 });
 
+
+//Realizando e retornando as alterações feitas em cartões
 app.put('/editacartao', async(req, res) => {
     await cartao.update(req.body, {
         where: {id: req.body.id}
@@ -196,6 +225,43 @@ app.put('/editacartao', async(req, res) => {
         });
     });
 });
+
+
+//Realizando e retornando as alterações feitas em empresas
+app.put('/editaempresa', async(req, res) => {
+    await empresa.update(req.body, {
+        where: {id: req.body.id}
+    }).then(function(){
+        return res.json({
+            error: false,
+            message: "Empresa alterada com sucesso!"
+        });
+    }).catch(function(erro){
+        return res.status(400).json({
+            error: true,
+            message: "Erro na alteração da empresa."
+        });
+    });
+});
+
+
+//Realizando e retornando as alterações feitas em promoções
+app.put('/editapromocao', async(req, res) => {
+    await promocao.update(req.body, {
+        where: {id: req.body.id}
+    }).then(function(){
+        return res.json({
+            error: false,
+            message: "Promoção alterada com sucesso!"
+        });
+    }).catch(function(erro){
+        return res.status(400).json({
+            error: true,
+            message: "Erro na alteração da promoção."
+        });
+    });
+});
+
 
 
 // app.put('/editacompra', async(req, res) => {
@@ -214,41 +280,10 @@ app.put('/editacartao', async(req, res) => {
 //     });
 // });
 
-// app.put('/editapromocao', async(req, res) => {
-//     await promocao.update(req.body, {
-//         where: {id: req.body.id}
-//     }).then(function(){
-//         return res.json({
-//             error: false,
-//             message: "Promoção alterada com sucesso!"
-//         });
-//     }).catch(function(erro){
-//         return res.status(400).json({
-//             error: true,
-//             message: "Erro na alteração da promoção."
-//         });
-//     });
-// });
-
-// app.put('/editaempresa', async(req, res) => {
-//     await empresa.update(req.body, {
-//         where: {id: req.body.id}
-//     }).then(function(){
-//         return res.json({
-//             error: false,
-//             message: "Empresa alterada com sucesso!"
-//         });
-//     }).catch(function(erro){
-//         return res.status(400).json({
-//             error: true,
-//             message: "Erro na alteração da empresa."
-//         });
-//     });
-// });
-
 
 /*--------------Criando Exclusões--------------*/
 
+//Excluindo clientes cadastrados
 app.get('/excluircliente/:id', async(req, res) => {
     await cliente.destroy({
         where: {id: req.params.id}
@@ -265,6 +300,8 @@ app.get('/excluircliente/:id', async(req, res) => {
     });
 });
 
+
+//Excluindo cartões cadastrados
 app.get('/excluircartao/:id', async(req, res) => {
     await cartao.destroy({
         where: {id: req.params.id}
@@ -281,8 +318,45 @@ app.get('/excluircartao/:id', async(req, res) => {
     });
 });
 
+
+//Excluindo empresas cadastradas
+app.get('/excluirempresa/:id', async(req, res) => {
+    await empresa.destroy({
+        where: {id: req.params.id}
+    }).then(function(){
+        return res.json({
+            error: false,
+            message: "Empresa excluída com sucesso!"
+        });
+    }).catch(function(erro){
+        return res.status(400).json({
+            error: true,
+            message: "Erro ao excluir a empresa."
+        });
+    });
+});
+
+
+//Excluindo promoções cadastradas
+app.get('/excluirpromocao/:id', async(req, res) => {
+    await promocao.destroy({
+        where: {id: req.params.id}
+    }).then(function(){
+        return res.json({
+            error: false,
+            message: "Promoção excluída com sucesso!"
+        });
+    }).catch(function(erro){
+        return res.status(400).json({
+            error: true,
+            message: "Erro ao excluir a promoção."
+        });
+    });
+});
+
+
 // app.get('/excluircompra/:id', async(req, res) => {
-//     await compra.destroy({
+    //     await compra.destroy({
 //         where: {id: req.params.id}
 //     }).then(function(){
 //         return res.json({
@@ -293,38 +367,6 @@ app.get('/excluircartao/:id', async(req, res) => {
 //         return res.status(400).json({
 //             error: true,
 //             message: "Erro ao excluir a compra."
-//         });
-//     });
-// });
-
-// app.get('/excluirpromocao/:id', async(req, res) => {
-//     await promocao.destroy({
-//         where: {id: req.params.id}
-//     }).then(function(){
-//         return res.json({
-//             error: false,
-//             message: "Promoção excluída com sucesso!"
-//         });
-//     }).catch(function(erro){
-//         return res.status(400).json({
-//             error: true,
-//             message: "Erro ao excluir a promoção."
-//         });
-//     });
-// });
-
-// app.get('/excluirempresa/:id', async(req, res) => {
-//     await empresa.destroy({
-//         where: {id: req.params.id}
-//     }).then(function(){
-//         return res.json({
-//             error: false,
-//             message: "Empresa excluída com sucesso!"
-//         });
-//     }).catch(function(erro){
-//         return res.status(400).json({
-//             error: true,
-//             message: "Erro ao excluir a empresa."
 //         });
 //     });
 // });
