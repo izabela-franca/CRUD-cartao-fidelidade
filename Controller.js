@@ -47,13 +47,26 @@ app.post('/clientes', async(req, res) => {
 
 
 //Inserindo novos registros de cartões
-app.post('/cartoes', async(req, res) => {
-    await cartao.create(
-        req.body  
-    ).then(function(){      
+app.post('/cliente/:id/cartoes', async(req, res) => {
+    const cart = {
+        ClienteId: req.params.id,
+        dataCartao: req.body.dataCartao,
+        validade: req.body.validade
+    };
+
+    if (! await cliente.findByPk(req.params.id)){
+        return res.status(400).json({
+            error: true,
+            message: "Cliente não existe."
+        });
+    };
+
+    await cartao.create(cart)
+    .then(cartcli =>{     
         return res.json({
             error: false,
-            message: 'Cartão criado com sucesso!'
+            message: 'Cartão criado com sucesso.',
+            cartcli
         })
     }).catch(function(erro){
         return res.status(400).json({
@@ -83,13 +96,27 @@ app.post('/empresas', async(req, res) => {
 
 
 //Inserindo novos registros de promoções
-app.post('/promocoes', async(req, res) => {
-    await promocao.create(
-            req.body
-    ).then(function(){     
+app.post('/empresa/:id/promocao', async(req, res) => {  
+    const promo = {
+        EmpresaId: req.params.id,
+        nome: req.body.nome,
+        descricao: req.body.descricao,
+        validade: req.body.validade   
+    };
+
+    if (! await empresa.findByPk(req.params.id)){
+        return res.status(400).json({
+            error: true,
+            message: "Empresa não existe."
+        });
+    };
+
+    await promocao.create(promo)
+    .then(promoempre =>{     
         return res.json({
             error: false,
-            message: 'Promoção criada com sucesso.'
+            message: 'Promoção criado com sucesso.',
+            promoempre
         })
     }).catch(function(erro){
         return res.status(400).json({
@@ -101,40 +128,45 @@ app.post('/promocoes', async(req, res) => {
 
 
 //Inserindo novos registros de compras
-// app.post('/cartoes/:idcartao/promocoes/:idpromocao/compras', async(req, res) => {
-//     const comp = {
-//         date: req.body.date,
-//         quantidade: req.body.quantidade,
-//         valor: req.body.valor,
-//         CartaoId: req.params.idcartao,
-//         PromocaoId: req.params.idpromocao,
-//     };
-//     if (! await cartao.findbyPk(rep.params.id)){
-//         return res.status(400).json({
-//             error: true,
-//             message: "Cliente não existe."
-//         });
-//     };
-//     if (! await promocao.findbyPk(rep.params.id)){
-//         return res.status(400).json({
-//             error: true,
-//             message: "Promoção não existe."
-//         })
-//     };
-//     await compra.create(comp)
-//     .then (compcli=>{
-//         return res.json({
-//             error: false,
-//             message: "Compra foi inserida com sucesso!",
-//             compcli
-//         });
-//     }).catch ( erro =>{
-//         return res.status(400).json({
-//             error: true,
-//             message: "Não foi possível se conectar."
-//         });
-//     });
-// });
+app.post('/cartao/:idcartao/promocao/:idpromocao/compra', async(req, res) => {
+    const comp = {
+        date: req.body.date,
+        quantidade: req.body.quantidade,
+        valor: req.body.valor,
+        CartaoId: req.params.idcartao,
+        PromocaoId: req.params.idpromocao,  
+    };
+
+    if (! await cartao.findByPk(req.params.idcartao) && promocao.findByPk(req.params.idpromocao)){
+        return res.status(400).json({
+            error: true,
+            message: "Empresa não existe."
+        });
+    };
+
+    
+    if (! await promocao.findByPk(req.params.idpromocao)){
+        return res.status(400).json({
+            error: true,
+            message: "Promocao não existe."
+        });
+    };
+
+
+    await compra.create(comp)
+    .then(compcartpromo =>{     
+        return res.json({
+            error: false,
+            message: 'Compra realizada com sucesso.',
+            compcartpromo
+        })
+    }).catch(function(erro){
+        return res.status(400).json({
+            error: true,
+            message: 'Não foi possível se conectar.'
+        })
+    });
+});
 
 
 /*--------------Criando Consultas--------------*/
