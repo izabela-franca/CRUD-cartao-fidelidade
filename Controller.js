@@ -37,7 +37,8 @@ app.post('/clientes', async(req, res) => {
         uf: req.body.uf,
         nascimento: req.body.nascimento
     }
-    await cliente.create(cli).then(cli=>{     
+    await cliente.create(cli)
+    .then(cli=>{     
         return res.json({
             error: false,
             message: 'Cliente criado com sucesso.',
@@ -85,18 +86,21 @@ app.post('/cliente/:id/cartoes', async(req, res) => {
 
 //Inserindo novos registros de empresas
 app.post('/empresas', async(req, res) => {
-    await empresa.create(
-            req.body
-    ).then(emp=>{     
+    const emp = {
+        nome: req.body.nome,
+        dataAdesao: req.body.dataAdesao
+    }
+    await empresa.create(emp)
+    .then(emp=>{     
         return res.json({
             error: false,
-            message: 'Empresa criada com sucesso.'
+            message: 'Empresa criada com sucesso.',
+            emp
         })
     }).catch(function(erro){
         return res.status(400).json({
             error: true,
             message: 'Não foi possível se conectar.',
-            emp
         });
     });
 });
@@ -254,13 +258,21 @@ app.get('/compras', async(req, res) => {
 /*--------------Criando Updates--------------*/
 
 //Realizando e retornando as alterações feitas em clientes
-app.put('/cliente/:id', async(req, res) => {
-    await cliente.update(req.body, {
-        where: {id: req.params.id}
+app.put('/clientes/:id', async(req, res) => {
+    const cli = {
+        nome: req.body.nome,
+        cidade: req.body.cidade,
+        uf: req.body.uf,
+        nascimento: req.body.nascimento
+    }
+
+    await cliente.update(cli, {
+        where: Sequelize.and({id: req.params.id})
     }).then(function(){
         return res.json({
             error: false,
-            message: "Cliente alterado com sucesso!"
+            message: "Cliente alterado com sucesso!",
+            cli
         });
     }).catch(function(erro){
         return res.status(400).json({
@@ -284,7 +296,8 @@ app.put('/cartoes/:id', async(req, res) => {
     }).then(function(){
         return res.json({
             error: false,
-            message: "Cartão alterado com sucesso!"
+            message: "Cartão alterado com sucesso!",
+            cart
         });
     }).catch(function(erro){
         return res.status(400).json({
@@ -297,12 +310,17 @@ app.put('/cartoes/:id', async(req, res) => {
 
 //Realizando e retornando as alterações feitas em empresas
 app.put('/empresas/:id', async(req, res) => {
-    await empresa.update(req.body, {
+    const emp = {
+        nome: req.body.nome,
+        dataAdesao: req.body.dataAdesao
+        }
+    await empresa.update(emp, {
         where: {id: req.params.id}
     }).then(function(){
         return res.json({
             error: false,
-            message: "Empresa alterada com sucesso!"
+            message: "Empresa alterada com sucesso!",
+            emp
         });
     }).catch(function(erro){
         return res.status(400).json({
@@ -337,6 +355,7 @@ app.put('/empresa/:idempresa/promocao/:idpromocao', async(req, res) => {
     });
 });
 
+//Realizando e retornando as alterações feitas em compras
 app.put('/cartao/:idcartao/promocao/:idpromocao/compra', async(req, res) => {
     const comp = {
         data: req.body.data,
@@ -351,7 +370,8 @@ app.put('/cartao/:idcartao/promocao/:idpromocao/compra', async(req, res) => {
     }).then(function(){
             return res.json({
                 error: false,
-                message: "Compra alterada com sucesso!"
+                message: "Compra alterada com sucesso!",
+                comp
             });
         }).catch(function(erro){
             return res.status(400).json({
