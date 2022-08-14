@@ -1,5 +1,5 @@
-A project made during a Bootcamp from TI Start to practice Node.Js. 
+A project (CRUD) made during a Bootcamp from TI Start to practice Node.Js. 
 
 ________________________________________________________________________
 
-Projeto feito durante o Bootcamp TI Start para prática de Node.js.
+Projeto (CRUD) feito durante o Bootcamp TI Start para prática de Node.js.
