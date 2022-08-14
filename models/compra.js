@@ -16,7 +16,7 @@ module.exports = (sequelize, DataTypes) => {
     }
   };
   Compra.init({
-    date: DataTypes.DATEONLY,
+    data: DataTypes.DATEONLY,
     quantidade: DataTypes.INTEGER,
     valor: DataTypes.FLOAT,
     CartaoId: DataTypes.INTEGER,

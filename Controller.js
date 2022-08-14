@@ -4,6 +4,7 @@
 const express = require ('express');
 const cors =  require ('cors');
 const models = require('./models'); 
+const { Sequelize } = require('./models');
 
 
 //Iniciando a criação do Controller 
@@ -30,12 +31,17 @@ app.get('/', function(req, res){
 
 //Inserindo novos registros de clientes
 app.post('/clientes', async(req, res) => {
-    await cliente.create(
-        req.body
-    ).then(function(){     
+    const cli = {
+        nome: req.body.nome,
+        cidade: req.body.cidade,
+        uf: req.body.uf,
+        nascimento: req.body.nascimento
+    }
+    await cliente.create(cli).then(cli=>{     
         return res.json({
             error: false,
-            message: 'Cliente criado com sucesso.'
+            message: 'Cliente criado com sucesso.',
+            cli
         })
     }).catch(function(erro){
         return res.status(400).json({
@@ -72,7 +78,7 @@ app.post('/cliente/:id/cartoes', async(req, res) => {
         return res.status(400).json({
             error: true,
             message: 'Não foi possível se conectar.'
-        })
+        });
     });
 });
 
@@ -81,7 +87,7 @@ app.post('/cliente/:id/cartoes', async(req, res) => {
 app.post('/empresas', async(req, res) => {
     await empresa.create(
             req.body
-    ).then(function(){     
+    ).then(emp=>{     
         return res.json({
             error: false,
             message: 'Empresa criada com sucesso.'
@@ -89,8 +95,9 @@ app.post('/empresas', async(req, res) => {
     }).catch(function(erro){
         return res.status(400).json({
             error: true,
-            message: 'Não foi possível se conectar.'
-        })
+            message: 'Não foi possível se conectar.',
+            emp
+        });
     });
 });
 
@@ -130,17 +137,17 @@ app.post('/empresa/:id/promocao', async(req, res) => {
 //Inserindo novos registros de compras
 app.post('/cartao/:idcartao/promocao/:idpromocao/compra', async(req, res) => {
     const comp = {
-        date: req.body.date,
+        data: req.body.data,
         quantidade: req.body.quantidade,
         valor: req.body.valor,
         CartaoId: req.params.idcartao,
         PromocaoId: req.params.idpromocao,  
     };
 
-    if (! await cartao.findByPk(req.params.idcartao) && promocao.findByPk(req.params.idpromocao)){
+    if (! await cartao.findByPk(req.params.idcartao)){
         return res.status(400).json({
             error: true,
-            message: "Empresa não existe."
+            message: "Cartão não existe."
         });
     };
  
@@ -170,7 +177,7 @@ app.post('/cartao/:idcartao/promocao/:idpromocao/compra', async(req, res) => {
 /*--------------Criando Consultas--------------*/
 
 //Retornando todos os clientes existentes
-app.get('/listaclientes', async(req, res) => {
+app.get('/clientes', async(req, res) => {
     await cliente.findAll({
         order: [['nome', 'ASC']]   
     }).then(function(clientes){
@@ -185,7 +192,7 @@ app.get('/listaclientes', async(req, res) => {
 
 
 //Retornando todos os cartões cadastrados
-app.get('/listacartoes', async(req, res) => {
+app.get('/cartoes', async(req, res) => {
     await cartao.findAll({
         order: [['id', 'ASC']]   
     }).then(function(cartoes){
@@ -200,7 +207,7 @@ app.get('/listacartoes', async(req, res) => {
 
 
 //Retornando todas as empresas cadastradas
-app.get('/listaempresas', async(req, res) => {
+app.get('/empresas', async(req, res) => {
     await empresa.findAll({
         order: [['nome', 'ASC']]   
     }).then(function(empresas){
@@ -215,7 +222,7 @@ app.get('/listaempresas', async(req, res) => {
 
 
 //Retornando todas as promoções cadastradas
-app.get('/listapromocoes', async(req, res) => {
+app.get('/promocoes', async(req, res) => {
     await promocao.findAll({
         order: [['id', 'ASC']]   
     }).then(function(promocoes){
@@ -230,11 +237,11 @@ app.get('/listapromocoes', async(req, res) => {
 
 
 //Retornando todas as compras realizadas
-app.get('/listacompras', async(req, res) => {
+app.get('/compras', async(req, res) => {
     await compra.findAll({
         order: [['data', 'DESC']]   
     }).then(function(compras){
-        res.json({itempedidos})
+        res.json({compras})
     }).catch(erro=>{
         return res.status(400).json({
             error: true,
@@ -247,7 +254,7 @@ app.get('/listacompras', async(req, res) => {
 /*--------------Criando Updates--------------*/
 
 //Realizando e retornando as alterações feitas em clientes
-app.put('/editacliente/:id', async(req, res) => {
+app.put('/cliente/:id', async(req, res) => {
     await cliente.update(req.body, {
         where: {id: req.params.id}
     }).then(function(){
@@ -265,9 +272,15 @@ app.put('/editacliente/:id', async(req, res) => {
 
 
 //Realizando e retornando as alterações feitas em cartões
-app.put('/editacartao/:id', async(req, res) => {  
-    await cartao.update(req.body, {
-        where: {id: req.params.id}
+app.put('/cartoes/:id', async(req, res) => {
+    const cart = {
+        ClienteId: req.body.ClienteId,
+        dataCartao: req.body.dataCartao,
+        validade: req.body.validade
+    };
+    
+    await cartao.update(cart, {
+        where: Sequelize.and({id: req.params.id})
     }).then(function(){
         return res.json({
             error: false,
@@ -283,7 +296,7 @@ app.put('/editacartao/:id', async(req, res) => {
 
 
 //Realizando e retornando as alterações feitas em empresas
-app.put('/editaempresa/:id', async(req, res) => {
+app.put('/empresas/:id', async(req, res) => {
     await empresa.update(req.body, {
         where: {id: req.params.id}
     }).then(function(){
@@ -301,9 +314,16 @@ app.put('/editaempresa/:id', async(req, res) => {
 
 
 //Realizando e retornando as alterações feitas em promoções
-app.put('/editapromocao/:id', async(req, res) => {
-    await promocao.update(req.body, {
-        where: {id: req.params.id}
+app.put('/empresa/:idempresa/promocao/:idpromocao', async(req, res) => {  
+    const promo = {
+        EmpresaId: req.params.idempresa,
+        nome: req.body.nome,
+        descricao: req.body.descricao,
+        validade: req.body.validade   
+    };
+
+    await promocao.update(promo, {
+        where: Sequelize.and({id: req.params.idpromocao})
     }).then(function(){
         return res.json({
             error: false,
@@ -317,23 +337,29 @@ app.put('/editapromocao/:id', async(req, res) => {
     });
 });
 
+app.put('/cartao/:idcartao/promocao/:idpromocao/compra', async(req, res) => {
+    const comp = {
+        data: req.body.data,
+        quantidade: req.body.quantidade,
+        valor: req.body.valor,
+        CartaoId: req.params.idcartao,
+        PromocaoId: req.params.idpromocao,  
+    };
 
-
-// app.put('/editacompra/:id', async(req, res) => {
-//     await compra.update(req.body, {
-//         where: {id: req.params.id}
-//     }).then(function(){
-//         return res.json({
-//             error: false,
-//             message: "Compra alterada com sucesso!"
-//         });
-//     }).catch(function(erro){
-//         return res.status(400).json({
-//             error: true,
-//             message: "Erro na alteração da compra."
-//         });
-//     });
-// });
+    await compra.update(comp, {
+        where: Sequelize.and({CartaoId: req.params.idcartao, PromocaoId:req.params.idpromocao})
+    }).then(function(){
+            return res.json({
+                error: false,
+                message: "Compra alterada com sucesso!"
+            });
+        }).catch(function(erro){
+            return res.status(400).json({
+                error: true,
+                message: "Erro na alteração da compra."
+            });
+        });
+});
 
 
 /*--------------Criando Exclusões--------------*/
@@ -409,22 +435,21 @@ app.get('/excluirpromocao/:id', async(req, res) => {
     });
 });
 
-
-// app.get('/excluircompra/:id', async(req, res) => {
-    //     await compra.destroy({
-//         where: {id: req.params.id}
-//     }).then(function(){
-//         return res.json({
-//             error: false,
-//             message: "Compra excluída com sucesso!"
-//         });
-//     }).catch(function(erro){
-//         return res.status(400).json({
-//             error: true,
-//             message: "Erro ao excluir a compra."
-//         });
-//     });
-// });
+app.get('/cartao/:idcartao/promocao/:idpromocao/excluircompra', async(req, res) => {
+    await compra.destroy({
+        where: Sequelize.and({CartaoId: req.params.idcartao, PromocaoId:req.params.idpromocao})
+    }).then(function(){
+        return res.json({
+            error: false,
+            message: "Compra excluída com sucesso!"
+        });
+    }).catch(function(erro){
+        return res.status(400).json({
+            error: true,
+            message: "Erro ao excluir a compra."
+        });
+    });
+});
 
 
 /*--------------Criando portas de acesso--------------*/
