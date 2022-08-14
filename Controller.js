@@ -455,6 +455,8 @@ app.get('/excluirpromocao/:id', async(req, res) => {
     });
 });
 
+
+//Excluindo compras realizadas
 app.get('/cartao/:idcartao/promocao/:idpromocao/excluircompra', async(req, res) => {
     await compra.destroy({
         where: Sequelize.and({CartaoId: req.params.idcartao, PromocaoId:req.params.idpromocao})
