@@ -143,15 +143,13 @@ app.post('/cartao/:idcartao/promocao/:idpromocao/compra', async(req, res) => {
             message: "Empresa não existe."
         });
     };
-
-    
+ 
     if (! await promocao.findByPk(req.params.idpromocao)){
         return res.status(400).json({
             error: true,
             message: "Promocao não existe."
         });
     };
-
 
     await compra.create(comp)
     .then(compcartpromo =>{     
@@ -177,6 +175,11 @@ app.get('/listaclientes', async(req, res) => {
         order: [['nome', 'ASC']]   
     }).then(function(clientes){
         res.json({clientes})
+    }).catch(erro=>{
+        return res.status(400).json({
+            error: true,
+            message: "Não foi possível se conectar."
+        });
     });
 });
 
@@ -187,6 +190,11 @@ app.get('/listacartoes', async(req, res) => {
         order: [['id', 'ASC']]   
     }).then(function(cartoes){
         res.json({cartoes})
+    }).catch(erro=>{
+        return res.status(400).json({
+            error: true,
+            message: "Não foi possível se conectar."
+        });
     });
 });
 
@@ -197,6 +205,11 @@ app.get('/listaempresas', async(req, res) => {
         order: [['nome', 'ASC']]   
     }).then(function(empresas){
         res.json({empresas})
+    }).catch(erro=>{
+        return res.status(400).json({
+            error: true,
+            message: "Não foi possível se conectar."
+        });
     });
 });
 
@@ -207,26 +220,36 @@ app.get('/listapromocoes', async(req, res) => {
         order: [['id', 'ASC']]   
     }).then(function(promocoes){
         res.json({promocoes})
+    }).catch(erro=>{
+        return res.status(400).json({
+            error: true,
+            message: "Não foi possível se conectar."
+        });
     });
 });
 
 
-// //Retornando todas as compras realizadas
-// app.get('/listacompras', async(req, res) => {
-//     await compra.findAll({
-//         order: [['data', 'DESC']]   
-//     }).then(function(compras){
-//         res.json({itempedidos})
-//     });
-// });
+//Retornando todas as compras realizadas
+app.get('/listacompras', async(req, res) => {
+    await compra.findAll({
+        order: [['data', 'DESC']]   
+    }).then(function(compras){
+        res.json({itempedidos})
+    }).catch(erro=>{
+        return res.status(400).json({
+            error: true,
+            message: "Não foi possível se conectar."
+        });
+    });
+});
 
 
 /*--------------Criando Updates--------------*/
 
 //Realizando e retornando as alterações feitas em clientes
-app.put('/editacliente', async(req, res) => {
+app.put('/editacliente/:id', async(req, res) => {
     await cliente.update(req.body, {
-        where: {id: req.body.id}
+        where: {id: req.params.id}
     }).then(function(){
         return res.json({
             error: false,
@@ -242,9 +265,9 @@ app.put('/editacliente', async(req, res) => {
 
 
 //Realizando e retornando as alterações feitas em cartões
-app.put('/editacartao', async(req, res) => {
+app.put('/editacartao/:id', async(req, res) => {  
     await cartao.update(req.body, {
-        where: {id: req.body.id}
+        where: {id: req.params.id}
     }).then(function(){
         return res.json({
             error: false,
@@ -260,9 +283,9 @@ app.put('/editacartao', async(req, res) => {
 
 
 //Realizando e retornando as alterações feitas em empresas
-app.put('/editaempresa', async(req, res) => {
+app.put('/editaempresa/:id', async(req, res) => {
     await empresa.update(req.body, {
-        where: {id: req.body.id}
+        where: {id: req.params.id}
     }).then(function(){
         return res.json({
             error: false,
@@ -278,9 +301,9 @@ app.put('/editaempresa', async(req, res) => {
 
 
 //Realizando e retornando as alterações feitas em promoções
-app.put('/editapromocao', async(req, res) => {
+app.put('/editapromocao/:id', async(req, res) => {
     await promocao.update(req.body, {
-        where: {id: req.body.id}
+        where: {id: req.params.id}
     }).then(function(){
         return res.json({
             error: false,
@@ -296,9 +319,9 @@ app.put('/editapromocao', async(req, res) => {
 
 
 
-// app.put('/editacompra', async(req, res) => {
+// app.put('/editacompra/:id', async(req, res) => {
 //     await compra.update(req.body, {
-//         where: {id: req.body.id}
+//         where: {id: req.params.id}
 //     }).then(function(){
 //         return res.json({
 //             error: false,
