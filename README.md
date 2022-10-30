@@ -18,7 +18,7 @@ Olá, sejam bem-vindos(as)!
 </p>
 
 ## 🗂️Link Projeto
-- <a href= "https://izabela-franca.github.io/portfolio/"> Clique aqui <a/>
+- <a href= "https://github.com/izabela-franca/CRUD-cartao-fidelidade"> Clique aqui <a/>
 
 ## 🚀 Tecnologias
 
