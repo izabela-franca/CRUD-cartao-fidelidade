@@ -22,7 +22,7 @@ Olá, sejam bem-vindos(as)!
 Este projeto foi desenvolvido com as seguintes tecnologias:
  
 - JavaScript
-- Node.Js
+- Node.js
 - Banco de Dados MySQL
 - Sequelize
 
