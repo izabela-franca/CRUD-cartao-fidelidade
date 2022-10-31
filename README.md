@@ -29,7 +29,7 @@ Este projeto foi desenvolvido com as seguintes tecnologias:
 
 ## 💻 Descrição
 
-CRUD realizado para substituir cartões de fidelidade em estabelimentos comerciais. <br>
+CRUD realizado para substituir cartões de fidelidade em estabelecimentos comerciais. <br>
 Modelagem do projeto:
   
  ![image](https://user-images.githubusercontent.com/101933646/198892211-1bf3997a-ccfb-454e-9ddf-257fccb18feb.png)
