@@ -21,7 +21,7 @@ let promocao = models.Promocao;
 let empresa = models.Empresa;
 
 
-// /*--------------Criando Inserções--------------*/
+/*--------------Criando Inserções--------------*/
 
 //Definindo rotas e configurando mensagens
 app.get('/', function(req, res){
