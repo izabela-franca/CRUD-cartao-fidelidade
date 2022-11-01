@@ -1,4 +1,4 @@
-<h1 align="center"> CRUD Cartão Fidelidade  </h1>
+<h1 align="center"> CRUD Cartão Fidelidade - API Rest com Express e MySQL </h1>
 
 <p align="center">
 Olá, sejam bem-vindos(as)!
@@ -29,7 +29,7 @@ Este projeto foi desenvolvido com as seguintes tecnologias:
 
 ## 💻 Descrição
 
-CRUD realizado para substituir cartões de fidelidade em estabelecimentos comerciais. <br>
+CRUD realizado para substituir cartões de fidelidade em estabelecimentos comerciais utilizando banco de dados MySQL, requisições feitas pelo Postman e seguindo o modelo de arquitetura REST.<br>
 Modelagem do projeto:
   
  ![image](https://user-images.githubusercontent.com/101933646/198892211-1bf3997a-ccfb-454e-9ddf-257fccb18feb.png)
